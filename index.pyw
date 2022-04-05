@@ -59,6 +59,7 @@ class AppWindow(qtw.QMainWindow):
         # Set signals
         self.ui.totranslate.textChanged.connect(self.updateResults)
         self.ui.comboBox.currentIndexChanged.connect(self.updateResults)
+        self.ui.comboBox.currentIndexChanged.connect(lambda: self.ui.newpronounce.setText(""))
         self.ui.tags.currentIndexChanged.connect(self.storeSettings)
         self.ui.timer.timeout.connect(self.timeoutEvent)
         self.ui.actionMultiple_2.triggered.connect(lambda: self.changeCards(0))
@@ -67,6 +68,11 @@ class AppWindow(qtw.QMainWindow):
         self.ui.actionUndo.triggered.connect(self.removeFromHold)
         self.ui.actionRedo.triggered.connect(self.restoreFromRemoved)
         self.ui.translated.textEdited.connect(self.resultsUpdated)
+        self.ui.totranslate.returnPressed.connect(lambda: self.holdBeforeCSV(self.__class__.toTranslate,
+                                                                            self.__class__.currentDefinition,
+                                                                            self.__class__.originalPronunciation,
+                                                                            self.__class__.newPronunciation,
+                                                                            self.ui.tags.currentText()))
         self.ui.translated.returnPressed.connect(lambda: self.holdBeforeCSV(self.__class__.toTranslate,
                                                                             self.__class__.currentDefinition,
                                                                             self.__class__.originalPronunciation,
@@ -161,7 +167,6 @@ class AppWindow(qtw.QMainWindow):
             self.__class__.newPronunciation = self.__class__.translatorInstance.pronunciation
             self.ui.newpronounce.setText(self.__class__.newPronunciation)
 
-            # self.idleStatus()
         if not self.__class__.spaget:
             self.ui.translated.setText(self.__class__.currentDefinition)
 
@@ -189,18 +194,14 @@ class AppWindow(qtw.QMainWindow):
 
         # Append arguments to a class variable based on the class variable CardType
         if self.__class__.cardType == 0:
-            AppWindow.holding.append(f"{definition}<br><br>{{{{c1::{character}}}}}, {oldpronunciation} \
-                                     {newpronunciation},{tags}")
-            AppWindow.holding.append(f"{character}<br><br>{{{{c1::{definition}}}}}, {oldpronunciation} \
-                                     {newpronunciation},{tags}")
+            AppWindow.holding.append(f"{definition}<br><br>{{{{c1::{character} {oldpronunciation}{newpronunciation}}}}},{tags}")
+            AppWindow.holding.append(f"{character}<br><br>{{{{c1::{definition}}}}}, {oldpronunciation} {newpronunciation},{tags}")
             AppWindow.holdingIndex.append(2)
         elif self.__class__.cardType == 1:
-            AppWindow.holding.append(f"{character}<br><br>{{{{c1::{definition}}}}}, {oldpronunciation} \
-                                     {newpronunciation},{tags}")
+            AppWindow.holding.append(f"{character}<br><br>{{{{c1::{definition}{oldpronunciation} {newpronunciation}}}}},{tags}")
             AppWindow.holdingIndex.append(1)
         elif self.__class__.cardType == 2:
-            AppWindow.holding.append(f"{definition}<br><br>{{{{c1::{character}}}}}, {oldpronunciation} \
-                                     {newpronunciation},{tags}")
+            AppWindow.holding.append(f"{definition}<br><br>{{{{c1::{character}{oldpronunciation} {newpronunciation}}}}}, {tags}")
             AppWindow.holdingIndex.append(1)
 
         # Refresh status, clear terminal
@@ -211,6 +212,7 @@ class AppWindow(qtw.QMainWindow):
             self.ui.statusbar.showMessage(f"Added \"{character}\" to CSV with NO tag", 2000)
             self.ui.timer.start(2000)
         self.ui.totranslate.setText("")
+        self.ui.translated.setText("")
 
     def removeFromHold(self):
         if not AppWindow.holding:
@@ -245,7 +247,6 @@ class AppWindow(qtw.QMainWindow):
             f.seek(0)
             f.write('\n'.join(AppWindow.holding))
             f.seek(0)
-            print(f.read())  # remove when finished
 
         self.ui.totranslate.clear()
 
