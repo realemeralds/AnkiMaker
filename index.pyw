@@ -1,10 +1,10 @@
 """
-AnkiMaker v0.0.1 by RealEmeralds - Easily make Anki cards to learn a new language
+AnkiMaker v0.0.2 by RealEmeralds - Easily make Anki cards to learn a new language
 
-Note: Still have to improve + add quite a bit of functionality
-Also really shit code
+Note: fixed quite a few bugs, fairly happy with this version
+ill try and add multithreading and whatnot on the next version
+also instructions on how to import to Anki (lol)
 
-I spent too much time on this - I have a Chinese test tmr (lol)
 """
 
 import sys
@@ -187,21 +187,21 @@ class AppWindow(qtw.QMainWindow):
             return None
 
         # Add brackets to pronunciation if they exist
-        if oldpronunciation:
-            oldpronunciation = f"({oldpronunciation})"
         if newpronunciation:
-            newpronunciation = f"({newpronunciation})"
+            oldpronunciation = f" ({newpronunciation})"
+        elif oldpronunciation:
+            oldpronunciation = f" ({oldpronunciation})"
 
         # Append arguments to a class variable based on the class variable CardType
         if self.__class__.cardType == 0:
-            AppWindow.holding.append(f"{definition}<br><br>{{{{c1::{character} {oldpronunciation}{newpronunciation}}}}},{tags}")
-            AppWindow.holding.append(f"{character}<br><br>{{{{c1::{definition} {oldpronunciation}{newpronunciation}}}}} ,{tags}")
+            AppWindow.holding.append(f"\"{definition}<br><br>{{{{c1::{character}{oldpronunciation}{newpronunciation}}}}}\",\"{tags}\"")
+            AppWindow.holding.append(f"\"{character}<br><br>{{{{c1::{definition}{oldpronunciation}{newpronunciation}}}}}\",\"{tags}\"")
             AppWindow.holdingIndex.append(2)
         elif self.__class__.cardType == 1:
-            AppWindow.holding.append(f"{character}<br><br>{{{{c1::{definition}{oldpronunciation} {newpronunciation}}}}},{tags}")
+            AppWindow.holding.append(f"\"{character}<br><br>{{{{c1::{definition}{oldpronunciation}{newpronunciation}}}}}\",\"{tags}\"")
             AppWindow.holdingIndex.append(1)
         elif self.__class__.cardType == 2:
-            AppWindow.holding.append(f"{definition}<br><br>{{{{c1::{character}{oldpronunciation} {newpronunciation}}}}}, {tags}")
+            AppWindow.holding.append(f"\"{definition}<br><br>{{{{c1::{character}{oldpronunciation}{newpronunciation}}}}}\",\"{tags}\"")
             AppWindow.holdingIndex.append(1)
 
         # Refresh status, clear terminal
@@ -245,7 +245,7 @@ class AppWindow(qtw.QMainWindow):
     def writeIntoCSV(self):
         with codecs.open('assets/Import_Me.csv', 'a+', encoding='utf-8') as f:
             f.seek(0)
-            f.write('\n'.join(AppWindow.holding))
+            f.write('\n'.join(AppWindow.holding) + '\n')
             f.seek(0)
 
         self.ui.totranslate.clear()
@@ -257,7 +257,6 @@ def main():
     window.show()
     # Execute the app
     sys.exit(app.exec_())
-
 
 if __name__ == "__main__":
     main()

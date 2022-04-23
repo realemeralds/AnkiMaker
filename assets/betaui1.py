@@ -19,7 +19,6 @@ class Ui_AnkiMaker(object):
         font.setFamily("Google Sans")
         font.setPointSize(12)
         AnkiMaker.setFont(font)
-        AnkiMaker.setStyleSheet("color: #eaeaea")
         self.centralwidget = QtWidgets.QWidget(AnkiMaker)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.centralwidget)
