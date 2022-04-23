@@ -195,7 +195,7 @@ class AppWindow(qtw.QMainWindow):
         # Append arguments to a class variable based on the class variable CardType
         if self.__class__.cardType == 0:
             AppWindow.holding.append(f"{definition}<br><br>{{{{c1::{character} {oldpronunciation}{newpronunciation}}}}},{tags}")
-            AppWindow.holding.append(f"{character}<br><br>{{{{c1::{definition}}}}}, {oldpronunciation} {newpronunciation},{tags}")
+            AppWindow.holding.append(f"{character}<br><br>{{{{c1::{definition} {oldpronunciation}{newpronunciation}}}}} ,{tags}")
             AppWindow.holdingIndex.append(2)
         elif self.__class__.cardType == 1:
             AppWindow.holding.append(f"{character}<br><br>{{{{c1::{definition}{oldpronunciation} {newpronunciation}}}}},{tags}")
