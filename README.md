@@ -5,3 +5,4 @@
 
 # Known Issues
 * No dependencies listed on github (lol)
+* googletrans version 3.1.0 is needed: `pip install googletrans==3.1.0a0`
